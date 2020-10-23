@@ -1,5 +1,37 @@
-tokens:
-  - "abijEYsAwkqFFFGdySBK3u7QH9HEzw1DyAG6Gi12R6c"
-  - "BFSJvXOGKE38SWlDiKWGIbZTB8x72N7nYV9QYMpyKZu"
-  - "43PWXRuRWG9TEgEqPGx3hMYp4foaxXwWV50kSBDVeWw"
-  - "qRQHLW7I6J7nchPp0gSgWIqoz7fVVXVw5LUyuRJhtga"
+# line_token: 7aVoWrsvrqggj4ribkkxLEut09YGHhf17acXZkXujyP
+line_token: gDDPBVkVf5zvp9Eb2X23kNqGNa18ko9tssE9GZitw1r
+base_url: https://cdn.apdigital.ai/api
+interval_time: 2
+authentication_endpoint:
+  path: /auth
+  method: post
+  time_limit: 1500
+  body:
+    email: sitthichai@forviz.co.th
+    password: Pop12345
+  response:
+    token: ''
+    isFirst: ''
+property_endpoint:
+  path: /user-property
+  method: get
+  time_limit: 200
+endpoints:
+  - path: /user-feature-dashboard
+    method: post
+    time_limit: 100
+    required_property: true
+    required_property_unit: true
+  - path: /v2/property-feature-dashboard
+    method: get
+    time_limit: 100
+    required_property: true
+    required_property_unit: true
+  - path: /get-news-announcement
+    method: post
+    time_limit: 100
+    required_property: true
+  - path: /message-all
+    method: post
+    time_limit: 100
+    required_property: true

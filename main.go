@@ -1,10 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/toffysoft/health-noti.git/notify"
@@ -43,33 +46,66 @@ type Attribute struct {
 
 func main() {
 
-	go schedule.Run()
+	go shutdownHandler()
+	v := os.Getenv("APP_VERSION")
 
-	router := gin.Default()
-	gin.SetMode(gin.ReleaseMode)
-	router.Use(cors)
+	if v == "" {
+		os.Setenv("APP_VERSION", "1.0.1")
+		v = os.Getenv("APP_VERSION")
+	}
 
-	router.POST("/api/webhook", func(c *gin.Context) {
-		body, err := ioutil.ReadAll(c.Request.Body)
-		if err != nil {
-			fmt.Printf("%s \n", err)
-		}
-		defer c.Request.Body.Close()
+	msg := fmt.Sprintf("Health Check Version %s Is Start", v)
+	notify.Notify(msg)
+	schedule.Run()
 
-		var w Webhook
-		err = json.Unmarshal(body, &w)
-		if err != nil {
-			fmt.Printf("%s \n", err)
-		}
+	// go schedule.Run()
 
-		m := w.Status + " => " + w.Monitorurl + " : " + w.IncidentReason + "( " + w.IncidentTime + " )"
+	// router := gin.Default()
+	// gin.SetMode(gin.ReleaseMode)
+	// router.Use(cors)
 
-		go notify.Notify(m)
+	// router.POST("/api/webhook", func(c *gin.Context) {
+	// 	body, err := ioutil.ReadAll(c.Request.Body)
+	// 	if err != nil {
+	// 		fmt.Printf("%s \n", err)
+	// 	}
+	// 	defer c.Request.Body.Close()
 
-		c.JSON(http.StatusOK, gin.H{"success": true, "message": "OK"})
-	})
+	// 	var w Webhook
+	// 	err = json.Unmarshal(body, &w)
+	// 	if err != nil {
+	// 		fmt.Printf("%s \n", err)
+	// 	}
 
-	router.Run(":8080")
+	// 	m := w.Status + " => " + w.Monitorurl + " : " + w.IncidentReason + "( " + w.IncidentTime + " )"
+
+	// 	go notify.Notify(m)
+
+	// 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "OK"})
+	// })
+
+	// router.Run(":8080")
+}
+
+// shutdownHandler triggers application shutdown.
+func shutdownHandler() {
+	// signChan channel is used to transmit signal notifications.
+	signChan := make(chan os.Signal, 1)
+	// Catch and relay certain signal(s) to signChan channel.
+	signal.Notify(signChan, os.Interrupt, syscall.SIGTERM)
+
+	// Blocking until a signal is sent over signChan channel. Progress to
+	// next line after signal
+	sig := <-signChan
+
+	log.Println("cleanup started with", sig, "signal")
+	msg := fmt.Sprintf("Health Check Version %s Is Terminate", os.Getenv("APP_VERSION"))
+	notify.Notify(msg)
+	time.Sleep(time.Duration(1) * time.Second)
+
+	log.Println("cleanup completed in", 1, "seconds")
+
+	os.Exit(1)
 }
 
 func cors(c *gin.Context) {

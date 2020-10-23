@@ -17,19 +17,20 @@ type Conf struct {
 	BaseURL                string        `yaml:"base_url"`
 	IntervalTime           time.Duration `yaml:"interval_time"`
 	AuthenticationEndpoint Endpoint      `yaml:"authentication_endpoint"`
+	PropertyEndpoint       Endpoint      `yaml:"property_endpoint"`
 	Endpoints              []Endpoint    `yaml:"endpoints"`
 }
 
 type Endpoint struct {
-	Path      string   `yaml:"path"`
-	Method    string   `yaml:"method"`
-	Body      *Body    `yaml:"body,omitempty"`
-	TimeLimit int64    `yaml:"time_limit"`
-	Response  Response `yaml:"response"`
+	Path                 string                 `yaml:"path"`
+	Method               string                 `yaml:"method"`
+	Body                 map[string]interface{} `yaml:"body"`
+	Query                map[string]interface{} `yaml:"query"`
+	TimeLimit            int64                  `yaml:"time_limit"`
+	RequiredProperty     bool                   `yaml:"required_property"`
+	RequiredPropertyUnit bool                   `yaml:"required_property_unit"`
+	Response             map[string]interface{} `yaml:"response"`
 }
-
-type Body map[string]interface{}
-type Response map[string]interface{}
 
 func getFile(fileName string) ([]byte, error) {
 
