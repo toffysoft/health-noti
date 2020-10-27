@@ -1,14 +1,13 @@
-# line_token: 7aVoWrsvrqggj4ribkkxLEut09YGHhf17acXZkXujyP
-line_token: gDDPBVkVf5zvp9Eb2X23kNqGNa18ko9tssE9GZitw1r
-base_url: https://cdn.apdigital.ai/api
-interval_time: 2
+line_token: secret
+base_url: http://localhost/api
+interval_time: 5 # mins
 authentication_endpoint:
   path: /auth
   method: post
   time_limit: 1500
   body:
-    email: sitthichai@forviz.co.th
-    password: Pop12345
+    email: email
+    password: password
   response:
     token: ''
     isFirst: ''
